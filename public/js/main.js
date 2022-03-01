@@ -29,9 +29,11 @@ function updateCollapse(id) {
 		if (i == id) {
 			collapsables[i].button.classList.remove('collapsed');
 			collapsables[i].body.show();
+			collapsables[i].selected = true;
 		} else {
 			collapsables[i].button.classList.add('collapsed');
 			collapsables[i].body.hide();
+			collapsables[i].selected = false;
 		}
 	}
 }
@@ -43,14 +45,19 @@ function refresh () {
 		values.push(starting_value + i);
 	}
 	timeline.data.datasets[0].data = values;
-	console.log(timeline.data.datasets[0].data);
+	for (let i = 0; i < collapsables.length; ++i) {
+		if (collapsables[i].selected) {
+			// UPDATE
+		}
+	}
 	timeline.update();
 };
 
 for (let i = 0; i < 3; ++i) {
 	collapsables.push({
 		button: document.getElementById('collapse' + (i + 1) + '-button'),
-		body: new bootstrap.Collapse(document.getElementById('collapse' + (i + 1) + '-body'), { toggle: (i == 0) })
+		body: new bootstrap.Collapse(document.getElementById('collapse' + (i + 1) + '-body'), { toggle: (i == 0) }),
+		selected: (i == 0)
 	});
 }
 
