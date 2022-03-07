@@ -1,6 +1,6 @@
 const ctxTimeline = document.getElementById('graphTimeline');
 let collapsables = [];
-let checkboxes = [true, true, true];
+let checkboxes = [true, true, true, true];
 
 const timeline = new Chart(ctxTimeline, {
   type: 'line',
@@ -32,40 +32,55 @@ function updateCollapse(id) {
 
 function updateCheckbox(id) {
 	checkboxes[id] = !checkboxes[id];
-	document.getElementById(id == 0 ? "invest2-insurance" : id == 1 ? "invest2-gas" : "invest2-maintenance").disabled = !checkboxes[id];
+	document.getElementById(id == 1 ? "invest2-insurance" : id == 2 ? "invest2-gas" : id == 3 ? "invest2-maintenance" : "invest1-living-cost").disabled = !checkboxes[id];
 }
 
 function refresh () {
-	const starting_value = document.getElementById('starting-value').value || 0;
 	let labels = [];
 	let values = [];
+	const starting_value = document.getElementById('starting-value').value || 0;
+	const duration = document.getElementById('duration').value || 0;
+	const duration_type = document.getElementById('duration-label').value || 1;
+	const years = Math.floor(duration_type == 2 ? duration : duration / 12);
+	const months = (duration_type == 2 ? (duration - years) * 12 : duration % 12);
 	if (collapsables[0].selected) {
-		const inscost = parseInt(document.getElementById('invest1-inscost').value) || 0;
-		const ancost = parseInt(document.getElementById('invest1-ancost').value) || 0;
-		const duration = parseInt(document.getElementById('invest1-duration').value) || 1;
-		let tmp = inscost;
-		
-		for (let i = 0; i <= duration; ++i) {
-			labels.push('Year ' + i);
-			if (i > 0)
-				tmp = tmp + 28716 + ancost;
+		const initial_cost = Number(document.getElementById('invest1-initial-cost').value || 0);
+		const annual_cost = Number(document.getElementById('invest1-annual-cost').value || 0);
+		const living_cost = Number(checkboxes[0] ? document.getElementById('invest1-living-cost').value || 0 : 0);
+		let tmp = starting_value - initial_cost;
+		if (years === 0) {
+			labels.push('Month 0');
+			tmp -= annual_cost;
 			values.push(tmp);
+			for (let i = 1; i <= months; ++i) {
+				labels.push('Month ' + i);
+				tmp -= living_cost;
+				values.push(tmp);
+			}
+		} else {
+			for (let i = 0; i <= years; ++i) {
+				labels.push('Year ' + i);
+				values.push(tmp);
+				tmp -= annual_cost + (living_cost * 12);
+			}
 		}
 		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
 		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
-		document.getElementById("Result").innerHTML += ('<p>Total cost = '+tmp+'</p>');
-		document.getElementById("Result").innerHTML += ('<p>Total administrative cost (Fixed cost) = '+ (inscost + (ancost * duration)) +'</p>');
-		document.getElementById("Result").innerHTML += ('<p>Total student life cost (Variable cost) = '+ (28716 * duration) +'</p>');
+		if (years === 0)
+			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (starting_value - initial_cost - annual_cost - (living_cost * months))+'</p>');
+		else
+			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (starting_value - initial_cost - (annual_cost * years) - ((living_cost * 12) * years))+'</p>');
+		document.getElementById("Result").innerHTML += ('<p>Total administrative cost (Fixed cost) = '+ (initial_cost + (annual_cost * duration)) +'</p>');
+		if (years === 0)
+			document.getElementById("Result").innerHTML += ('<p>Total student life cost (Variable cost) = '+ (living_cost * months) +'</p>');
+		else
+			document.getElementById("Result").innerHTML += ('<p>Total student life cost (Variable cost) = '+ ((living_cost * 12) * years) +'</p>');
 
 	} else if (collapsables[1].selected) {
 		const price = Number(document.getElementById('invest2-price').value || 0);
-		const insurance = Number(checkboxes[0] ? document.getElementById('invest2-insurance').value || 0 : 0);
-		const gas = Number(checkboxes[1] ? document.getElementById('invest2-gas').value || 0 : 0);
-		const maintenance = Number(checkboxes[2] ? document.getElementById('invest2-maintenance').value || 0 : 0);
-		const duration = document.getElementById('invest2-duration').value || 0;
-		const duration_type = document.getElementById('invest2-duration-label').value || 1;
-		const years = Math.floor(duration_type == 2 ? duration : duration / 12);
-		const months = (duration_type == 2 ? (duration - years) * 12 : duration % 12);
+		const insurance = Number(checkboxes[1] ? document.getElementById('invest2-insurance').value || 0 : 0);
+		const gas = Number(checkboxes[2] ? document.getElementById('invest2-gas').value || 0 : 0);
+		const maintenance = Number(checkboxes[3] ? document.getElementById('invest2-maintenance').value || 0 : 0);
 		let tmp = Number(starting_value - price);
 		if (years === 0) {
 			labels.push('Month 0');
@@ -82,15 +97,23 @@ function refresh () {
 				tmp -= (insurance + gas + maintenance) * 12;
 			}
 		}
-		console.log(labels);
-		console.log(values);
+		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
+		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
+		if (years === 0) {
+			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (Number(starting_value - price) - ((insurance + gas + maintenance) * months))+'</p>');
+		} else {
+			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (Number(starting_value - price) - (((insurance + gas + maintenance) * 12) * years)) +'</p>');
+		}
+		document.getElementById("Result").innerHTML += ('<p>Total direct cost (Fixed cost) = '+ Number(starting_value - price) +'</p>');
+		if (years === 0) {
+			document.getElementById("Result").innerHTML += ('<p>Total usage cost (Variable cost) = '+ (-(insurance + gas + maintenance) * months)+'</p>');
+		} else {
+			document.getElementById("Result").innerHTML += ('<p>Total usage cost (Variable cost) = '+ ((-(insurance + gas + maintenance) * 12) * years) +'</p>');
+		}
+
 	} else if (collapsables[2].selected) {
 		const quantity = document.getElementById('invest3-quantity').value || 0;
 		const interest_rate = (document.getElementById('invest3-interest-rate').value || 0) / 100 + 1;
-		const duration = document.getElementById('invest3-duration').value || 0;
-		const duration_type = document.getElementById('invest3-duration-label').value || 1;
-		const years = Math.floor(duration_type == 2 ? duration : duration / 12);
-		const months = (duration_type == 2 ? (duration - years) * 12 : duration % 12);
 		let tmp = Number(starting_value);
 		if (years === 0) {
 			labels.push('Month 0');
@@ -105,8 +128,17 @@ function refresh () {
 				labels.push('Year ' + i);
 				values.push(tmp);
 				tmp = (tmp + (quantity * 12)) * interest_rate;
+				console.log(tmp);
 			}
 		}
+		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
+		
+		if (years === 0) {
+			document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
+			document.getElementById("Result").innerHTML += ('<p>Profit = '+ (Number(starting_value) + (Number(quantity) * months))+'</p>');
+		}/* else
+			document.getElementById("Result").innerHTML += ('<p>Profit = '+ (((tmp + (Number(quantity) * 12)) * interest_rate)) +'</p>');*/
+
 	} else {
 		for (let i = 0; i < 7; ++i) {
 			values.push(starting_value + i);
