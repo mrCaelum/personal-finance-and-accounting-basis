@@ -52,14 +52,24 @@ function refresh () {
 		const duration = document.getElementById('invest3-duration').value || 0;
 		const duration_type = document.getElementById('invest3-duration-label').value || 1;
 		const interest_rate = (document.getElementById('invest3-interest-rate').value || 0) / 100 + 1;
-		const years = (duration_type === 2 ? duration : duration / 12);
-		const months = (duration_type === 1 ? duration : duration % 12);
+		const years = Math.floor(duration_type == 2 ? duration : duration / 12);
+		const months = (duration_type == 2 ? (duration - years) * 12 : duration % 12);
 		let labels = [];
-		let tmp = starting_value;
-		for (let i = 0; i <= duration; ++i) {
-			labels.push((duration_type === 1 ? 'Month ' : 'Year ') + i);
-			tmp = tmp * interest_rate + quantity;
+		let tmp = Number(starting_value);
+		if (years === 0) {
+			labels.push('Month 0');
 			values.push(tmp);
+			for (let i = 1; i <= months; ++i) {
+				labels.push('Month ' + i);
+				tmp += Number(quantity);
+				values.push(tmp);
+			}
+		} else {
+			for (let i = 0; i <= years; ++i) {
+				labels.push('Year ' + i);
+				values.push(tmp);
+				tmp = (tmp + (quantity * 12)) * interest_rate;
+			}
 		}
 		timeline.data.labels = labels;
 	} else {
