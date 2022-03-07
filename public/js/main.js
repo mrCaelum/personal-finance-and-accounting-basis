@@ -6,10 +6,10 @@ const timeline = new Chart(ctxTimeline, {
   data: {
 		labels: [0, 1, 2, 3, 4, 5, 6],
 		datasets: [{
-			label: 'Timeline',
+			label: 'Money (EUR €)',
 			data: [0, 0, 0, 0, 0, 0, 0],
 			fill: false,
-			borderColor: 'rgb(75, 192, 192)',
+			borderColor: document.getElementById('colorpicker').value || '#563d7c',
 			tension: 0.1
 		}]
 	}
@@ -36,10 +36,15 @@ function refresh () {
 		const quantity = document.getElementById('invest3-quantity').value || 0;
 		const duration = document.getElementById('invest3-duration').value || 0;
 		const duration_type = document.getElementById('invest3-duration-label').value || 1;
+		const interest_rate = (document.getElementById('invest3-interest-rate').value || 0) / 100 + 1;
+		const years = (duration_type === 2 ? duration : duration / 12);
+		const months = (duration_type === 1 ? duration : duration % 12);
 		let labels = [];
-		for (let i = 0; i < duration; ++i) {
-			labels.push(i);
-			values.push(starting_value + (quantity * i));
+		let tmp = starting_value;
+		for (let i = 0; i <= duration; ++i) {
+			labels.push((duration_type === 1 ? 'Month ' : 'Year ') + i);
+			tmp = tmp * interest_rate + quantity;
+			values.push(tmp);
 		}
 		timeline.data.labels = labels;
 	} else {
@@ -48,6 +53,7 @@ function refresh () {
 		}
 	}
 	timeline.data.datasets[0].data = values;
+	timeline.data.datasets[0].borderColor = document.getElementById('colorpicker').value;
 	timeline.update();
 };
 
