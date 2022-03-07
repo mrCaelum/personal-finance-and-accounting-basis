@@ -51,6 +51,12 @@ function refresh () {
 				tmp = tmp + 28716 + ancost;
 			values.push(tmp);
 		}
+		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
+		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
+		document.getElementById("Result").innerHTML += ('<p>Total cost = '+tmp+'</p>');
+		document.getElementById("Result").innerHTML += ('<p>Total administrative cost (Fixed cost) = '+ (inscost + (ancost * duration)) +'</p>');
+		document.getElementById("Result").innerHTML += ('<p>Total student life cost (Variable cost) = '+ (28716 * duration) +'</p>');
+
 	} else if (collapsables[1].selected) {
 		const price = Number(document.getElementById('invest2-price').value || 0);
 		const insurance = Number(checkboxes[0] ? document.getElementById('invest2-insurance').value || 0 : 0);
