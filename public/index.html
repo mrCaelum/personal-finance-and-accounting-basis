@@ -10,7 +10,7 @@
 <body>
 	<h1 class="display-1">Personal finance & Accounting basis</h1>
 	<div class="d-flex">
-		<div class="d-flex flex-column align-items-end p-2" style="width: 12%;">
+		<div class="d-flex flex-column align-items-end p-2" style="width: 20%;">
 			<div class="form-floating input-group mb-3">
 				<input id="starting-value" type="number" class="form-control" aria-label="Amount (to the nearest euro)" value="0">
 				<label for="starting-value">Starting amount</label>
@@ -19,7 +19,7 @@
 			<input type="color" class="form-control form-control-color" id="colorpicker" value="#563d7c" title="Choose your color">
 			<button type="button" class="btn btn-success mt-4" style="margin-left: 2%; width: 100px; color: white;" onclick="refresh();"><i class="fa fa-refresh"></i> Refresh</button>
 		</div>
-		<div class="p-2" style="width: 88%;">
+		<div class="p-2" style="width: 80%;">
 			<div class="accordion" id="accordion">
 				<div class="accordion-item">
 					<h2 class="accordion-header">
@@ -57,7 +57,43 @@
 					</h2>
 					<div id="collapse2-body" class="accordion-collapse collapse" data-bs-parent="#accordion">
 						<div class="accordion-body">
-							Form2
+							<div class="input-group mb-3">
+								<span class="input-group-text">Car price :</span>
+								<input id="invest2-price" type="number" class="form-control" value="10000" min="0">
+								<span class="input-group-text">€</span>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-text">
+									<input class="form-check-input mt-0" type="checkbox" value="" aria-label="Insurance" onclick="updateCheckbox(0)" checked>
+								</div>
+								<span class="input-group-text">Insurance :</span>
+								<input id="invest2-insurance" type="number" class="form-control" value="60" min="0">
+								<span class="input-group-text"><em><small>per month</small></em></span>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-text">
+									<input class="form-check-input mt-0" type="checkbox" value="" aria-label="Gas" onclick="updateCheckbox(1)" checked>
+								</div>
+								<span class="input-group-text">Gas :</span>
+								<input id="invest2-gas" type="number" class="form-control" value="80" min="0">
+								<span class="input-group-text"><em><small>per month</small></em></span>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-text">
+									<input class="form-check-input mt-0" type="checkbox" value="" aria-label="Maintenance" onclick="updateCheckbox(2)" checked>
+								</div>
+								<span class="input-group-text">Maintenance :</span>
+								<input id="invest2-maintenance" type="number" class="form-control" value="80" min="0">
+								<span class="input-group-text"><em><small>per month</small></em></span>
+							</div>
+							<div class="input-group mb-3">
+								<span class="input-group-text">How long :</span>
+								<input id="invest2-duration" type="number" class="form-control" value="10" min="1">
+								<select class="form-select" id="invest2-duration-label">
+									<option selected value="1">months</option>
+									<option value="2">years</option>
+								</select>
+							</div>
 						</div>
 					</div>
 				</div>
