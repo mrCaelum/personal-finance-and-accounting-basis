@@ -32,7 +32,22 @@ function updateCollapse(id) {
 function refresh () {
 	const starting_value = document.getElementById('starting-value').value || 0;
 	let values = [];
-	if (collapsables[2].selected) {
+	if (collapsables[0].selected) {
+		const inscost = parseInt(document.getElementById('invest1-inscost').value) || 0;
+		const ancost = parseInt(document.getElementById('invest1-ancost').value) || 0;
+		const duration = parseInt(document.getElementById('invest1-duration').value) || 1;
+		let labels = [];
+		let tmp = inscost;
+		
+		for (let i = 0; i <= duration; ++i) {
+			labels.push('Year ' + i);
+			if (i > 0)
+				tmp = tmp + 28716 + ancost;
+			values.push(tmp);
+		}
+		timeline.data.labels = labels;
+	}
+	else if (collapsables[2].selected) {
 		const quantity = document.getElementById('invest3-quantity').value || 0;
 		const duration = document.getElementById('invest3-duration').value || 0;
 		const duration_type = document.getElementById('invest3-duration-label').value || 1;
