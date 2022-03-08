@@ -113,7 +113,7 @@ function refresh () {
 		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
 		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
 		document.getElementById("Result").innerHTML += ('<p>Total cost = '+ cost +'</p>');
-		document.getElementById("Result").innerHTML += ('<p>Total gain = '+ gain +'</p>');
+		document.getElementById("Result").innerHTML += ('<p>Total profit = '+ gain +'</p>');
 
 	} else if (collapsables[1].selected) {
 		const price = Number(document.getElementById('invest2-price').value || 0);
@@ -122,17 +122,23 @@ function refresh () {
 		const maintenance = Number(checkboxes[4] ? document.getElementById('invest2-maintenance').value || 0 : 0);
 		const saving = Number(checkboxes[5] ? document.getElementById('invest2-saving').value || 0 : 0);
 		let tmp = Number(starting_value - price);
+		let gain = 0;
+		let cost = price;
 		if (years === 0) {
 			labels.push('Month 0');
 			values.push(tmp);
 			for (let i = 1; i <= months; ++i) {
 				labels.push('Month ' + i);
+				gain += saving;
+				cost -= insurance + gas + maintenance;
 				tmp -= insurance + gas + maintenance - saving;
 				values.push(tmp);
 			}
 		} else {
 			for (let i = 0; i <= years; ++i) {
 				labels.push('Year ' + i);
+				gain += saving;
+				cost -= insurance + gas + maintenance;
 				values.push(tmp);
 				tmp -= (insurance + gas + maintenance - saving) * 12;
 			}
@@ -140,9 +146,9 @@ function refresh () {
 		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
 		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
 		if (years === 0) {
-			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (Number(starting_value - price) - ((insurance + gas + maintenance) * months))+'</p>');
+			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (Number(starting_value - price) - ((insurance + gas + maintenance - saving) * months)) +'</p>');
 		} else {
-			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (Number(starting_value - price) - (((insurance + gas + maintenance) * 12) * years)) +'</p>');
+			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (Number(starting_value - price) - (((insurance + gas + maintenance - saving) * 12) * years)) +'</p>');
 		}
 		document.getElementById("Result").innerHTML += ('<p>Total direct cost (Fixed cost) = '+ Number(starting_value - price) +'</p>');
 		if (years === 0) {
