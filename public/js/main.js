@@ -1,6 +1,6 @@
 const ctxTimeline = document.getElementById('graphTimeline');
 let collapsables = [];
-let checkboxes = [true, true, true, true];
+let checkboxes = [true, true, true, true, true];
 
 const timeline = new Chart(ctxTimeline, {
   type: 'line',
@@ -32,7 +32,18 @@ function updateCollapse(id) {
 
 function updateCheckbox(id) {
 	checkboxes[id] = !checkboxes[id];
-	document.getElementById(id == 1 ? "invest2-insurance" : id == 2 ? "invest2-gas" : id == 3 ? "invest2-maintenance" : "invest1-living-cost").disabled = !checkboxes[id];
+	if (id == 1) {
+		document.getElementById("invest1-expected-salary").disabled = !checkboxes[id];
+		document.getElementById("invest1-expected-duration").disabled = !checkboxes[id];
+		document.getElementById("invest1-expected-duration-label").disabled = !checkboxes[id];
+	} else {
+		document.getElementById(id == 2 ? "invest2-insurance" : id == 3 ? "invest2-gas" : id == 4 ? "invest2-maintenance" : "invest1-living-cost").disabled = !checkboxes[id];
+	}
+}
+
+function updateDurationType() {
+	const type = Number(document.getElementById('duration-label').value);
+	document.getElementById("invest1-expected-duration-label").innerHTML = (type == 2 ? "years" : "months");
 }
 
 function refresh () {
@@ -47,21 +58,43 @@ function refresh () {
 		const initial_cost = Number(document.getElementById('invest1-initial-cost').value || 0);
 		const annual_cost = Number(document.getElementById('invest1-annual-cost').value || 0);
 		const living_cost = Number(checkboxes[0] ? document.getElementById('invest1-living-cost').value || 0 : 0);
+		const expected_salary = Number(checkboxes[1] ? document.getElementById('invest1-expected-salary').value || 0 : 0);
+		const expected_duration = Number(checkboxes[1] ? document.getElementById('invest1-expected-duration').value || 0 : 0);
+		const expected_years = Math.floor(duration_type == 2 ? expected_duration : expected_duration / 12);
+		const expected_months = (duration_type == 2 ? (expected_duration - expected_years) * 12 : expected_duration % 12);
 		let tmp = starting_value - initial_cost;
 		if (years === 0) {
 			labels.push('Month 0');
 			tmp -= annual_cost;
 			values.push(tmp);
-			for (let i = 1; i <= months; ++i) {
+			let i = 1;
+			for (; i <= months; ++i) {
 				labels.push('Month ' + i);
 				tmp -= living_cost;
 				values.push(tmp);
 			}
+			if (expected_salary != 0) {
+				for (; i <= months + expected_months; ++i) {
+					labels.push('Month ' + i);
+					tmp += expected_salary - living_cost;
+					values.push(tmp);
+				}
+			}
 		} else {
-			for (let i = 0; i <= years; ++i) {
+			let i = 1;
+			labels.push('Year 0');
+			values.push(tmp);
+			for (; i <= years; ++i) {
 				labels.push('Year ' + i);
-				values.push(tmp);
 				tmp -= annual_cost + (living_cost * 12);
+				values.push(tmp);
+			}
+			if (expected_salary != 0) {
+				for (; i <= years + expected_years; ++i) {
+					labels.push('Year ' + i);
+					tmp += ((expected_salary + living_cost) * 12);
+					values.push(tmp);
+				}
 			}
 		}
 		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
@@ -78,9 +111,9 @@ function refresh () {
 
 	} else if (collapsables[1].selected) {
 		const price = Number(document.getElementById('invest2-price').value || 0);
-		const insurance = Number(checkboxes[1] ? document.getElementById('invest2-insurance').value || 0 : 0);
-		const gas = Number(checkboxes[2] ? document.getElementById('invest2-gas').value || 0 : 0);
-		const maintenance = Number(checkboxes[3] ? document.getElementById('invest2-maintenance').value || 0 : 0);
+		const insurance = Number(checkboxes[2] ? document.getElementById('invest2-insurance').value || 0 : 0);
+		const gas = Number(checkboxes[3] ? document.getElementById('invest2-gas').value || 0 : 0);
+		const maintenance = Number(checkboxes[4] ? document.getElementById('invest2-maintenance').value || 0 : 0);
 		let tmp = Number(starting_value - price);
 		if (years === 0) {
 			labels.push('Month 0');
