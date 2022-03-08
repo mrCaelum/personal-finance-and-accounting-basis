@@ -63,6 +63,9 @@ function refresh () {
 		const expected_years = Math.floor(duration_type == 2 ? expected_duration : expected_duration / 12);
 		const expected_months = (duration_type == 2 ? (expected_duration - expected_years) * 12 : expected_duration % 12);
 		let tmp = starting_value - initial_cost;
+		var cost;
+		var gain;
+
 		if (years === 0) {
 			labels.push('Month 0');
 			tmp -= annual_cost;
@@ -71,12 +74,14 @@ function refresh () {
 			for (; i <= months; ++i) {
 				labels.push('Month ' + i);
 				tmp -= living_cost;
+				cost = tmp;
 				values.push(tmp);
 			}
 			if (expected_salary != 0) {
 				for (; i <= months + expected_months; ++i) {
 					labels.push('Month ' + i);
 					tmp += expected_salary - living_cost;
+					gain = tmp;
 					values.push(tmp);
 				}
 			}
@@ -87,27 +92,22 @@ function refresh () {
 			for (; i <= years; ++i) {
 				labels.push('Year ' + i);
 				tmp -= annual_cost + (living_cost * 12);
+				cost = tmp;
 				values.push(tmp);
 			}
 			if (expected_salary != 0) {
 				for (; i <= years + expected_years; ++i) {
 					labels.push('Year ' + i);
 					tmp += ((expected_salary + living_cost) * 12);
+					gain = tmp;
 					values.push(tmp);
 				}
 			}
 		}
 		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
 		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
-		if (years === 0)
-			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (starting_value - initial_cost - annual_cost - (living_cost * months))+'</p>');
-		else
-			document.getElementById("Result").innerHTML += ('<p>Total cost = '+ (starting_value - initial_cost - (annual_cost * years) - ((living_cost * 12) * years))+'</p>');
-		document.getElementById("Result").innerHTML += ('<p>Total administrative cost (Fixed cost) = '+ (initial_cost + (annual_cost * duration)) +'</p>');
-		if (years === 0)
-			document.getElementById("Result").innerHTML += ('<p>Total student life cost (Variable cost) = '+ (living_cost * months) +'</p>');
-		else
-			document.getElementById("Result").innerHTML += ('<p>Total student life cost (Variable cost) = '+ ((living_cost * 12) * years) +'</p>');
+		document.getElementById("Result").innerHTML += ('<p>Total cost = '+ cost +'</p>');
+		document.getElementById("Result").innerHTML += ('<p>Total gain = '+ gain +'</p>');
 
 	} else if (collapsables[1].selected) {
 		const price = Number(document.getElementById('invest2-price').value || 0);
