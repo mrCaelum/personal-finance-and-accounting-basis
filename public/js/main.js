@@ -115,29 +115,30 @@ function refresh () {
 		const quantity = document.getElementById('invest3-quantity').value || 0;
 		const interest_rate = (document.getElementById('invest3-interest-rate').value || 0) / 100 + 1;
 		let tmp = Number(starting_value);
+		const result = [];
 		if (years === 0) {
 			labels.push('Month 0');
 			values.push(tmp);
 			for (let i = 1; i <= months; ++i) {
 				labels.push('Month ' + i);
-				tmp += Number(quantity);
+				tmp += Number(quantity) + ((tmp * interest_rate - tmp) / 12);
+				result[i] = tmp;
 				values.push(tmp);
 			}
 		} else {
 			for (let i = 0; i <= years; ++i) {
 				labels.push('Year ' + i);
 				values.push(tmp);
+				result[i] = tmp;
 				tmp = (tmp + (quantity * 12)) * interest_rate;
-				console.log(tmp);
 			}
 		}
 		document.getElementById("Result").innerHTML = ('<div id="Result"></div>');
-		
+		document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
 		if (years === 0) {
-			document.getElementById("Result").innerHTML += ('<h1>Result:</h1>');
-			document.getElementById("Result").innerHTML += ('<p>Profit = '+ (Number(starting_value) + (Number(quantity) * months))+'</p>');
-		}/* else
-			document.getElementById("Result").innerHTML += ('<p>Profit = '+ (((tmp + (Number(quantity) * 12)) * interest_rate)) +'</p>');*/
+			document.getElementById("Result").innerHTML += ('<p>Profit = '+ result[result.length - 1] +'</p>');
+		} else
+			document.getElementById("Result").innerHTML += ('<p>Profit = '+ result[result.length - 1] +'</p>');
 
 	} else {
 		for (let i = 0; i < 7; ++i) {
